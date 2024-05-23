@@ -1,0 +1,51 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "ninja-toolchain",
+            "displayName": "Ninja Configure Settings with toolchain",
+            "description": "Sets build and install directories",
+            "binaryDir": "${sourceDir}/builds/${presetName}",
+            "generator": "Ninja",
+            "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ninja-toolchain",
+            "configurePreset": "ninja-toolchain",
+            "displayName": "Build ninja-toolchain",
+            "description": "Build ninja with a toolchain"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "ninja-toolchain",
+            "configurePreset": "ninja-toolchain"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "ninja-workflow",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "ninja-toolchain"
+                },
+                {
+                    "type": "build",
+                    "name": "ninja-toolchain"
+                },
+                {
+                    "type": "test",
+                    "name": "ninja-toolchain"
+                }
+            ]
+        }
+    ]
+}
