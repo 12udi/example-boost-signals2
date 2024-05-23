@@ -2,17 +2,17 @@
 #include <gtest/gtest.h>
 #include <string>
 
-#include <utilities/Receiver.h>
+#include <utilities/Sender.h>
 
 namespace example::test {
 
 class ReceiverMock
 {
 public:
-  ReceiverMock(example::utilities::Receiver& receiver)
-    : m_receiver(receiver)
+  ReceiverMock(example::utilities::Sender& sender)
+    : m_sender(sender)
   {
-    m_connection = m_receiver.connect([this] {
+    m_connection = m_sender.connect([this] {
       refresh();
     });
   }
@@ -24,7 +24,7 @@ public:
 
   void refresh()
   {
-    m_received = m_receiver.getText();
+    m_received = m_sender.getText();
   }
 
   std::string received()
@@ -33,23 +33,23 @@ public:
   }
 
 private:
-  example::utilities::Receiver& m_receiver;
+  example::utilities::Sender& m_sender;
   boost::signals2::connection m_connection;
   std::string m_received;
 };
 
-TEST(Receiver, Constructor_Shall_Be_Default_Constructible)
+TEST(Sender, Constructor_Shall_Be_Default_Constructible)
 {
-  static_assert(std::is_constructible<example::utilities::Receiver>());
+  static_assert(std::is_constructible<example::utilities::Sender>());
   SUCCEED();
 }
 
-TEST(Receiver, On_Signal_Shall_Call_Slot)
+TEST(Sender, On_Signal_Shall_Call_Slot)
 {
   std::string const EXPECTED_MSG{"Shut up and take my money!"};
-  example::utilities::Receiver sender;
+  example::utilities::Sender sender;
   ReceiverMock receiver(sender);
-  sender.append(EXPECTED_MSG.c_str());
+  sender.updateText(EXPECTED_MSG.c_str());
   EXPECT_EQ(EXPECTED_MSG, receiver.received());
 }
 

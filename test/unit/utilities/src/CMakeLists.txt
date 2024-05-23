@@ -2,4 +2,4 @@
 
 set(TARGET_NAME Utilities)
 
-example_add_unit_test(Receiver TestReceiver.cpp)
+example_add_unit_test(Sender TestSender.cpp)

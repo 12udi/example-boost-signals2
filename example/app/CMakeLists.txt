@@ -30,13 +30,14 @@ target_include_directories(${TARGET_NAME}
 target_link_libraries(${TARGET_NAME}
     PRIVATE fmt::fmt
 )
+target_link_libraries(${TARGET_NAME}
+    PRIVATE Utilities
+)
 
 # folder structure
 set_target_properties(${TARGET_NAME}
     PROPERTIES FOLDER ${EXAMPLE_INSTALL_SUFFIX}
 )
-
-#set_target_properties(${TARGET_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 install(TARGETS ${TARGET_NAME}
     ARCHIVE DESTINATION lib

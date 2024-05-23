@@ -10,17 +10,13 @@ set(TARGET_SRC_DIR ${PROJECT_SOURCE_DIR}/example/${LOWERCASE_TARGET_NAME}/src)
 set(CMAKE_AUTOMOC OFF)
 set(CMAKE_AUTORCC OFF)
 
-set(PUBLIC_HEADERS
-    ${TARGET_INCLUDE_DIR}/${LOWERCASE_TARGET_NAME}/Receiver.h
-)
-
 set(SOURCES
     ${TARGET_SRC_DIR}/Receiver.cpp
+    ${TARGET_SRC_DIR}/Sender.cpp
 )
 
 # target
-add_library(${TARGET_NAME} SHARED
-    ${PUBLIC_HEADERS} 
+add_library(${TARGET_NAME} STATIC
     ${SOURCES}
 )
 
@@ -31,16 +27,12 @@ target_compile_options(${TARGET_NAME} PRIVATE
 
 target_include_directories(${TARGET_NAME}
     PUBLIC ${TARGET_INCLUDE_DIR}
+    PRIVATE ${TARGET_INCLUDE_DIR}/${LOWERCASE_TARGET_NAME}
 )
 
 # linker
 target_link_libraries(${TARGET_NAME}
     PRIVATE Boost::signals2
-)
-
-# public includes
-set_target_properties(${TARGET_NAME}
-    PROPERTIES PUBLIC_HEADER ${PUBLIC_HEADERS}
 )
 
 # folder structure

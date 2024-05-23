@@ -1,7 +1,5 @@
-#include <utilities/Receiver.h>
+#include "Receiver.h"
 
 namespace example::utilities {
-
-Receiver::Receiver() = default;
 
 } // namespace example::utilities

@@ -1,35 +1,42 @@
 #pragma once
 
+#include <string>
 #include <boost/signals2.hpp>
+
+#include "Sender.h"
 
 namespace example::utilities {
 
 class Receiver
 {
 public:
-  typedef boost::signals2::signal<void()> signal_t;
-
-  Receiver();
-
-  boost::signals2::connection connect(signal_t::slot_type const& subscriber)
+  Receiver(Sender& sender)
+    : m_sender(sender)
   {
-    return m_sig.connect(subscriber);
+    m_connection = m_sender.connect([this] {
+      refresh();
+    });
   }
 
-  void append(char const* s)
+  ~Receiver()
   {
-    m_text += s;
-    m_sig();
+    m_connection.disconnect();
   }
 
-  std::string& getText()
+  void refresh()
   {
-    return m_text;
+    m_received = m_sender.getText();
+  }
+
+  std::string received()
+  {
+    return m_received;
   }
 
 private:
-  signal_t m_sig;
-  std::string m_text;
+  Sender& m_sender;
+  boost::signals2::connection m_connection;
+  std::string m_received{};
 };
 
-} // namespace example::utilities
+}

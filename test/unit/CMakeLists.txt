@@ -28,10 +28,7 @@ function(example_add_unit_test name)
     )
     target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
-        GTest::gtest
-        GTest::gtest_main
         GTest::gmock
-        GTest::gmock_main
     )
 
     set_target_properties(${TEST_TARGET_NAME}
