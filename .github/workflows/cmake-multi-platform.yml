@@ -1,0 +1,68 @@
+name: cmake-multi-platform
+
+# Define when to trigger the pipeline
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  job:
+    name: ${{ matrix.os }}-Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # When this is true all running builds will be canceled when one fails
+      fail-fast: false
+      # This matrix defines the systems to build for
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: macos-latest
+            triplet: x64-osx-release
+            cxx: clang
+          - os: ubuntu-latest
+            triplet: x64-linux-release
+            cxx: gcc
+          - os: windows-latest
+            triplet: x64-windows-release
+            cxx: cl.exe
+
+    # Define environment variables which can be used within the build
+    env:
+      VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
+
+    steps:
+      # Checkout action
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      # Custom checkout action to get cmake with latest version
+      # Will be used instead of the version provided by the os image
+      - uses: lukka/get-cmake@latest
+
+      # Required for Windows OS build
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      # Custom vcpkg action to get vcpkg with latest version
+      # Will be used instead of the version provided by the os image
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        id: runvcpkg
+        with:
+          # This one is not needed, as it is the default value anyway.
+          # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgJsonGlob: '**/cmakepresets/vcpkg.json'
+
+      # Cmake actions configure, build and test
+      - name: Run CMake Config (including vcpkg)
+        run: cmake --preset ninja-toolchain
+
+      - name: Run CMake Build
+        run: cmake --build --preset ninja-toolchain --config Release
+
+      - name: Run CMake CTest
+        # Only run test for linux os to showcase the environment 
+        if: ${{ env.VCPKG_DEFAULT_TRIPLET == 'x64-linux-release' }}
+        run: ctest --preset ninja-toolchain --output-on-failure
